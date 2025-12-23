@@ -11,21 +11,54 @@ interface JoinSuccessModalProps {
 export default function JoinSuccessModal({ dream, contributionAmount, onClose }: JoinSuccessModalProps) {
   const [showParticles, setShowParticles] = useState(true);
 
+  // Fixed role label and declaration - only select once on mount
+  const [roleLabel] = useState(() => {
+    const roleLabels = ['Dream Supporter', 'Dream Believer', 'Dream Backer'];
+    return roleLabels[Math.floor(Math.random() * roleLabels.length)];
+  });
+
+  const [declaration] = useState(() => {
+    const declarations = [
+      "I believe this Dream can become real.",
+      "I just helped make this Dream one step closer to reality.",
+      "Together, we can turn this Dream into reality.",
+    ];
+    return declarations[Math.floor(Math.random() * declarations.length)];
+  });
+
   useEffect(() => {
     // Hide particles after animation
     const timer = setTimeout(() => setShowParticles(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  const charityPercentage = 5;
+  const handleViewDream = () => {
+    if (onClose) {
+      onClose();
+    }
+    // Scroll to top of dream detail page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  // Distribution breakdown
-  const distribution = {
-    winner: 90,
-    charity: 5,
-    creator: 1,
-    share: 3,
-    platformFee: 1,
+  const handleShare = () => {
+    const shareText = `I just became a ${roleLabel} of "${dream.title}"! ${declaration} Join me in making this dream come true!`;
+    const shareUrl = window.location.href;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `I'm a ${roleLabel} of "${dream.title}"`,
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {
+        // Fallback to clipboard
+        navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+        alert('Declaration copied to clipboard!');
+      });
+    } else {
+      // Fallback to clipboard
+      navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+      alert('Declaration copied to clipboard!');
+    }
   };
 
   return (
@@ -48,90 +81,62 @@ export default function JoinSuccessModal({ dream, contributionAmount, onClose }:
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform transition-all animate-scale-in">
-        {/* Header with celebration */}
-        <div className="relative bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl">
-          <div className="text-center">
-            <div className="text-5xl mb-3 animate-bounce">🎉</div>
-            <h2 className="text-xl font-bold mb-1">You've Made a Dream Come True!</h2>
-            <p className="text-primary-100 text-sm">Thank you for your contribution</p>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scale-in overflow-hidden">
+        {/* Dream Image */}
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={dream.image}
+            alt={dream.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://via.placeholder.com/800x400/6366f1/ffffff?text=${encodeURIComponent(dream.title)}`;
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-xl font-bold text-white drop-shadow-lg">{dream.title}</h3>
           </div>
         </div>
 
-        {/* Content */}
+        {/* Card Content */}
         <div className="p-6">
-          {/* Dream Image */}
-          <div className="mb-4 rounded-lg overflow-hidden">
-            <img
-              src={dream.image}
-              alt={dream.title}
-              className="w-full h-40 object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = `https://via.placeholder.com/800x400/6366f1/ffffff?text=${encodeURIComponent(dream.title)}`;
-              }}
-            />
+          {/* Role Label */}
+          <div className="text-center mb-4">
+            <div className="inline-block px-4 py-2 bg-gradient-to-r from-primary-100 to-primary-50 rounded-full border border-primary-200">
+              <p className="text-sm font-semibold text-primary-700">{roleLabel}</p>
+            </div>
           </div>
 
-          {/* Dream Title */}
-          <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">{dream.title}</h3>
+          {/* Declaration Text */}
+          <div className="text-center mb-6">
+            <p className="text-lg text-gray-700 italic leading-relaxed">
+              "{declaration}"
+            </p>
+          </div>
 
-          {/* Contribution Amount */}
-          <div className="mb-5 p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200">
+          {/* Contribution Amount - Highlight */}
+          <div className="mb-6 p-5 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border-2 border-primary-200">
             <div className="text-center">
-              <p className="text-sm text-gray-600 mb-1">Your Contribution</p>
-              <p className="text-2xl font-bold text-green-600">{formatCurrency(contributionAmount)}</p>
+              <p className="text-xs text-gray-600 mb-2 uppercase tracking-wide">My Contribution</p>
+              <p className="text-4xl font-bold text-primary-600">{formatCurrency(contributionAmount)}</p>
             </div>
           </div>
 
-          {/* Distribution Breakdown */}
-          <div className="mb-5">
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Fund Distribution</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between items-center py-1">
-                <span className="text-gray-600">Winner</span>
-                <span className="font-medium text-gray-900">{distribution.winner}%</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-gray-600">Charity</span>
-                <span className="font-semibold text-green-600">{distribution.charity}%</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-gray-600">Creator</span>
-                <span className="font-medium text-gray-900">{distribution.creator}%</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-gray-600">Share</span>
-                <span className="font-medium text-gray-900">{distribution.share}%</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-gray-600">Platform Fee</span>
-                <span className="font-medium text-gray-900">{distribution.platformFee}%</span>
-              </div>
-            </div>
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <button
+              onClick={handleViewDream}
+              className="w-full bg-primary-500 text-white py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors shadow-md"
+            >
+              View Dream
+            </button>
+            <button
+              onClick={handleShare}
+              className="w-full bg-white text-primary-600 py-3 rounded-lg font-semibold border-2 border-primary-500 hover:bg-primary-50 transition-colors"
+            >
+              Share My Declaration
+            </button>
           </div>
-
-          {/* Charity Highlight */}
-          <div className="p-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg border border-green-300 mb-5">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">💚</span>
-              <div>
-                <p className="font-semibold text-green-800 text-sm">
-                  You've contributed {charityPercentage}% to charity!
-                </p>
-                <p className="text-xs text-green-700 mt-0.5">
-                  Your contribution supports charitable causes.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Button */}
-          <button
-            onClick={onClose}
-            className="w-full bg-primary-500 text-white py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors shadow-md"
-          >
-            Close
-          </button>
         </div>
       </div>
     </div>

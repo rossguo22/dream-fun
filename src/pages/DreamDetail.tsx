@@ -203,56 +203,6 @@ export default function DreamDetail() {
             </div>
           )}
 
-          {/* Settled Status Information - Full details */}
-          {isSettled && dream.settlement && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Settlement Information</h3>
-              <div className="space-y-3">
-                {dream.settlement.drawDate && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Draw Date</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {formatDate(dream.settlement.drawDate)}
-                    </span>
-                  </div>
-                )}
-                {dream.settlement.selectedUserName && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Selected Dreamer</span>
-                    <span className="text-sm font-semibold text-green-700">
-                      {dream.settlement.selectedUserName}
-                    </span>
-                  </div>
-                )}
-                {dream.settlement.selectedAmount !== undefined && (
-                  <div className="flex justify-between items-center pt-2 border-t border-green-200">
-                    <span className="text-sm font-medium text-gray-700">Selected Amount</span>
-                    <span className="text-lg font-bold text-green-700">
-                      {formatCurrency(dream.settlement.selectedAmount)}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Funds</span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {formatCurrency(dream.settlement.totalFunds)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Platform Fee (5%)</span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {formatCurrency(dream.settlement.platformFee)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-green-200">
-                  <span className="text-sm font-medium text-gray-700">Dream Fulfillment Amount</span>
-                  <span className="text-sm font-bold text-green-700">
-                    {formatCurrency(dream.settlement.dreamAmount)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Creator Info */}
           <div className="mb-6 flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
@@ -300,7 +250,7 @@ export default function DreamDetail() {
         <div className="fixed left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 p-4 md:px-8 bottom-0">
           <div className="max-w-4xl mx-auto">
             {participated ? (
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center py-2">
                 <p className="text-sm text-green-600 font-medium">✓ You've successfully joined this dream!</p>
               </div>
             ) : (

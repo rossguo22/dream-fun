@@ -138,6 +138,25 @@ export default function Create() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <button
+        onClick={step > 1 ? handleBack : () => navigate('/')}
+        className="mb-6 text-gray-600 hover:text-gray-900 transition-colors flex items-center space-x-2"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        <span>Back</span>
+      </button>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Dream</h1>
         <p className="text-gray-600">Share your dream and make it happen together</p>
@@ -388,21 +407,14 @@ export default function Create() {
         )}
 
         {/* Buttons */}
-        <div className="mt-8 flex justify-between">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            {step === 1 ? 'Cancel' : 'Back'}
-          </button>
+        <div className={`mt-8 flex ${step === 1 || step === 2 ? 'justify-center' : 'justify-end'}`}>
           {step < 3 ? (
             <button
               type="button"
               onClick={handleNext}
               className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
             >
-              Next
+              Continue
             </button>
           ) : (
             <div className="flex space-x-3">
@@ -411,7 +423,7 @@ export default function Create() {
                 onClick={() => setStep(2)}
                 className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Edit
+                Re-edit
               </button>
               <button
                 type="button"
